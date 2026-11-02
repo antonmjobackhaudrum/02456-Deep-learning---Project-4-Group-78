@@ -1,0 +1,39 @@
+[2026-11-02 14:05:32,703][huggingface_hub.utils._http][WARNING] - '[Errno 8] nodename nor servname provided, or not known' thrown while requesting HEAD https://huggingface.co/datasets/vibrantlabsai/fiqa/resolve/main/README.md
+[2026-11-02 14:05:32,703][huggingface_hub.utils._http][WARNING] - Retrying in 1s [Retry 1/5].
+[2026-11-02 14:05:33,889][huggingface_hub.utils._http][WARNING] - '[Errno 8] nodename nor servname provided, or not known' thrown while requesting HEAD https://huggingface.co/datasets/vibrantlabsai/fiqa/resolve/main/README.md
+[2026-11-02 14:05:33,889][huggingface_hub.utils._http][WARNING] - Retrying in 2s [Retry 2/5].
+[2026-11-02 14:05:35,992][huggingface_hub.utils._http][WARNING] - '[Errno 8] nodename nor servname provided, or not known' thrown while requesting HEAD https://huggingface.co/datasets/vibrantlabsai/fiqa/resolve/main/README.md
+[2026-11-02 14:05:35,992][huggingface_hub.utils._http][WARNING] - Retrying in 4s [Retry 3/5].
+[2026-11-02 14:05:40,078][huggingface_hub.utils._http][WARNING] - '[Errno 8] nodename nor servname provided, or not known' thrown while requesting HEAD https://huggingface.co/datasets/vibrantlabsai/fiqa/resolve/main/README.md
+[2026-11-02 14:05:40,079][huggingface_hub.utils._http][WARNING] - Retrying in 8s [Retry 4/5].
+[2026-11-02 14:05:48,215][huggingface_hub.utils._http][WARNING] - '[Errno 8] nodename nor servname provided, or not known' thrown while requesting HEAD https://huggingface.co/datasets/vibrantlabsai/fiqa/resolve/main/README.md
+[2026-11-02 14:05:48,215][huggingface_hub.utils._http][WARNING] - Retrying in 8s [Retry 5/5].
+[2026-11-02 14:05:56,304][huggingface_hub.utils._http][WARNING] - '[Errno 8] nodename nor servname provided, or not known' thrown while requesting HEAD https://huggingface.co/datasets/vibrantlabsai/fiqa/resolve/main/README.md
+[2026-11-02 14:05:56,307][hydra.core.utils][ERROR] - Job failed
+Traceback (most recent call last):
+  File "/Users/anton/Library/Python/3.11/lib/python/site-packages/hydra/core/utils.py", line 223, in _run_job
+    ret.return_value = task_function(task_cfg)
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/anton/Desktop/DTU/7. Semester/02456 - Dyb læring/Project/main.py", line 11, in main
+    corpus = Corpus(dataset_name=cfg.dataset.name, base_dir=f'{cfg.base_path}/retrieval_data')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/anton/Desktop/DTU/7. Semester/02456 - Dyb læring/Project/src/data_utils/corpus.py", line 13, in __init__
+    self.ds = self.__load_data(base_dir=raw_data_dir)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/anton/Desktop/DTU/7. Semester/02456 - Dyb læring/Project/src/data_utils/corpus.py", line 57, in __load_data
+    ds = get_fiqa_dataset(base_dir)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/anton/Desktop/DTU/7. Semester/02456 - Dyb læring/Project/src/data_utils/download_retrieval_datasets.py", line 7, in get_fiqa_dataset
+    ds = load_dataset("vibrantlabsai/fiqa", "main", cache_dir=base_dir)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/datasets/load.py", line 1488, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/datasets/load.py", line 1133, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/datasets/load.py", line 1032, in dataset_module_factory
+    raise e1 from None
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/datasets/load.py", line 958, in dataset_module_factory
+    raise ConnectionError(f"Couldn't reach '{path}' on the Hub ({e.__class__.__name__})") from e
+ConnectionError: Couldn't reach 'vibrantlabsai/fiqa' on the Hub (LocalEntryNotFoundError)

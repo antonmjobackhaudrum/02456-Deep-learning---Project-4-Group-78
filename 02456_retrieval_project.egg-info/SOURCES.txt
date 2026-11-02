@@ -1,0 +1,8 @@
+LICENSE
+README.md
+pyproject.toml
+02456_retrieval_project.egg-info/PKG-INFO
+02456_retrieval_project.egg-info/SOURCES.txt
+02456_retrieval_project.egg-info/dependency_links.txt
+02456_retrieval_project.egg-info/top_level.txt
+src/__init__.py
