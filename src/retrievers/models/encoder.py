@@ -5,6 +5,7 @@ from math import sqrt
 
 class TransformerEncoder(nn.Module):
     def __init__(self, n_layers: int, n_heads: int, emb_dim: int, hidden_dim: int, feed_forward_dim: int):
+        super().__init__()
         self.n_layers = n_layers
         self.n_heads = n_heads
         self.emb_dim =    emb_dim
@@ -16,8 +17,16 @@ class TransformerEncoder(nn.Module):
         """
         Instantiate the model.
         """
-        self.model = None
-        raise NotImplementedError()
+        self.model = nn.TransformerEncoder(
+            encoder_layer=nn.TransformerEncoderLayer(
+                d_model=self.emb_dim,
+                nhead=self.n_heads,
+                dim_feedforward=self.feed_forward_dim,
+                activation='relu',
+                batch_first=True
+            ),
+            num_layers=self.n_layers
+        )
 
     def pool(self, x):
         """
@@ -25,16 +34,18 @@ class TransformerEncoder(nn.Module):
         Returns: A pooled vector of shape batch_size x emb_dim
         """
         if self.cfg.model.pooling_type == 'cls':
-            raise NotImplementedError()
+            return x[:, 0, :]
         
         elif self.cfg.model.pooling_type == 'max':
-            raise NotImplementedError()
+            return torch.max(x, dim=1).values
         
         elif self.cfg.model.pooling_type == 'mean':
-            raise NotImplementedError()
+            return torch.mean(x, dim=1)
 
     def forward(self, x: torch.tensor) -> torch.tensor:
         """
         Run a forward pass on the model
         """
-        raise NotImplementedError()
+        x = self.model(x)
+        x = self.pool(x)
+        return x
