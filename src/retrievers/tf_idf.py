@@ -105,8 +105,6 @@ class TFIDF(Retriever):
         n_terms = len(self.corpus_vocabulary)
         tfidf_matrix = lil_matrix((n_documents, n_terms), dtype=np.float32)
 
-
-        # TODO: Add tf-idf code
         all_documents = self.index.GetDocuments()
         for i, doc in enumerate(all_documents):
             f_doc = self.GetDocumentTermCounts(doc)
@@ -136,7 +134,7 @@ class TFIDF(Retriever):
         query_vector = lil_matrix((len(queries), len(self.corpus_vocabulary)), dtype=np.float32)
 
         for i, query in enumerate(queries):
-            text = self.PreprocessText(query)
+            text = self.GetQueryVocabulary(query)
             for term in text:
                 if term in self.term_to_index:
                     j = self.term_to_index[term]
