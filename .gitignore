@@ -17,3 +17,6 @@ outputs/
 
 # Archives
 *.zip
+
+# Dataset cache built by Corpus (main.py)
+retrieval_data/
