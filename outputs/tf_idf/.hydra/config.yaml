@@ -1,7 +1,0 @@
-device: cpu
-base_path: .
-top_k: 10
-dataset:
-  name: fiqa
-retriever:
-  method: td-idf

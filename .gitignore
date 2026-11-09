@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# OS files
+.DS_Store
+__MACOSX/
+
+# Hydra run outputs
+outputs/
+
+# Archives
+*.zip
