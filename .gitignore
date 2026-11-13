@@ -20,3 +20,6 @@ outputs/
 
 # Dataset cache built by Corpus (main.py)
 retrieval_data/
+
+# DPR checkpoints (train.py)
+checkpoints/

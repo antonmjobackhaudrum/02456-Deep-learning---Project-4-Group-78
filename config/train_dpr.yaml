@@ -1,0 +1,21 @@
+defaults:
+  - _self_  # Hydra magic
+  - dataset: fiqa
+  - model: encoder
+
+
+device: cpu   # cpu | cuda
+base_path: "."
+
+training:
+  lr: 3e-4
+  num_epochs: 10
+  batch_size: 64
+  max_query_len: 64     # same as in dpr.py
+  max_doc_len: 256      # same as in dpr.py
+  checkpoint_dir: "checkpoints"
+
+# Keep Hydra in the current directory to ensure relative paths are correct
+hydra:
+  run:
+    dir: "outputs/train_dpr/"
