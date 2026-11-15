@@ -1,6 +1,7 @@
 """
 Evaluate TF-IDF, BM25 or DPR, e.g. python main.py retriever=bm25
 """
+import os
 import hydra
 from src.data_utils.corpus import Corpus
 from src.data_utils.query import Query
@@ -36,7 +37,12 @@ def build_retriever(cfg, corpus: Corpus):
 @hydra.main(config_path='config', config_name='fiqa_experiment.yaml', version_base=None)
 def main(cfg):
     ### Load a dataset
-    corpus = Corpus(dataset_name=cfg.dataset.name, base_dir=f'{cfg.base_path}/retrieval_data')
+    data_dir = (
+        f'{cfg.base_path}/data'
+        if os.path.exists(f'{cfg.base_path}/data/{cfg.dataset.name}')
+        else f'{cfg.base_path}/retrieval_data'
+    )
+    corpus = Corpus(dataset_name=cfg.dataset.name, base_dir=data_dir)
 
     ### Prepare queries
     splits = {'Train': corpus.train, 'Val': corpus.val, 'Test': corpus.test}

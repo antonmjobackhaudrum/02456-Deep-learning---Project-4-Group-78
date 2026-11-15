@@ -1,6 +1,7 @@
 import os
 import pickle
 from abc import ABC, abstractmethod
+import numpy as np
 from src.data_utils.dataset import DocumentDataset
 
 class Retriever(ABC):
@@ -47,5 +48,7 @@ class Retriever(ABC):
         @param k: The number of relevant passages to retrieve for each input query.
         """
         scores = self.CalculateScores(queries)
-        ranked_documents = [[d for _, d in sorted(zip(query_scores, self.index.GetDocuments()), key=lambda pair: pair[0], reverse=True)] for query_scores in scores]
-        return [ranked_document[:min(k, len(ranked_documents[0]))] for ranked_document in ranked_documents]
+        all_docs = self.index.GetDocuments()
+        top_k = min(k, len(all_docs))
+        top_indices = np.argsort(-scores, axis=1)[:, :top_k]
+        return [[all_docs[idx] for idx in row_indices] for row_indices in top_indices]
