@@ -1,6 +1,6 @@
 #!/bin/sh
 ### General options
-#BSUB -q gpuv100
+#BSUB -q gpua100
 #BSUB -J dpr_training
 #BSUB -n 4
 #BSUB -gpu "num=1:mode=exclusive_process"
