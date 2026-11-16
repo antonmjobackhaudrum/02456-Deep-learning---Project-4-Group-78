@@ -1,1 +1,2 @@
 method: "dpr"
+index_path: "checkpoints/document_embeddings.pt"

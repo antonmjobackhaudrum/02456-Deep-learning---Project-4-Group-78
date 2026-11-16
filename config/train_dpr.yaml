@@ -8,8 +8,8 @@ device: cpu   # cpu | cuda
 base_path: "."
 
 training:
-  lr: 3e-4
-  num_epochs: 10
+  lr: 1e-4
+  num_epochs: 100
   batch_size: 64
   max_query_len: 64     # same as in dpr.py
   max_doc_len: 256      # same as in dpr.py

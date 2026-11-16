@@ -1,6 +1,7 @@
 """
 Dense Passage Retrieval: encode all documents once, then score queries against them.
 """
+import os
 import torch
 from transformers import AutoTokenizer
 
@@ -23,8 +24,24 @@ class DPR(Retriever):
 
         self.__load_models()
 
-        # The vector database
-        self.document_embeddings = self.EncodeDocuments()
+        # The vector database (load pre-computed index if available, else compute and cache)
+        db_path = index_path
+        if db_path is None and hasattr(self.cfg, 'retriever'):
+            db_path = self.cfg.retriever.get('index_path', 'checkpoints/document_embeddings.pt')
+        elif db_path is None:
+            db_path = 'checkpoints/document_embeddings.pt'
+
+        self.vector_db_path = db_path
+        if self.vector_db_path and os.path.exists(self.vector_db_path):
+            print(f'Loading vector database from {self.vector_db_path}...')
+            self.document_embeddings = torch.load(self.vector_db_path, map_location=self.device)
+        else:
+            print(f'Building vector database by encoding {len(self.index.GetDocuments())} documents...')
+            self.document_embeddings = self.EncodeDocuments()
+            if self.vector_db_path:
+                os.makedirs(os.path.dirname(self.vector_db_path), exist_ok=True)
+                torch.save(self.document_embeddings, self.vector_db_path)
+                print(f'Saved vector database to {self.vector_db_path}')
 
     def __load_models(self):
         # n_heads, n_layers, emb_in, hidden_dim, feed_forward_dim
@@ -43,14 +60,20 @@ class DPR(Retriever):
                                            pooling_type=self.cfg.model.pooling_type)
 
 
-        # Need to read dict (c.f. trainer.py)
+        # Load checkpoints if they exist
         query_weights_path = self.cfg.model.get('query_encoder_weights_path', None)
-        if self.cfg.model.get('query_encoder_weights_path', None):
-            query_encoder.load_state_dict(torch.load(query_weights_path,map_location=self.device))
+        if query_weights_path and os.path.exists(query_weights_path):
+            query_encoder.load_state_dict(torch.load(query_weights_path, map_location=self.device))
+            print(f'Loaded query encoder weights from {query_weights_path}')
+        elif query_weights_path:
+            print(f'Warning: Query encoder checkpoint not found at {query_weights_path}. Using uninitialized weights.')
 
         document_weights_path = self.cfg.model.get('document_encoder_weights_path', None)
-        if self.cfg.model.get('document_encoder_weights_path', None):
-            document_encoder.load_state_dict(torch.load(document_weights_path,map_location=self.device))
+        if document_weights_path and os.path.exists(document_weights_path):
+            document_encoder.load_state_dict(torch.load(document_weights_path, map_location=self.device))
+            print(f'Loaded document encoder weights from {document_weights_path}')
+        elif document_weights_path:
+            print(f'Warning: Document encoder checkpoint not found at {document_weights_path}. Using uninitialized weights.')
 
         self.query_encoder = query_encoder.to(self.device).eval()
         self.document_encoder = document_encoder.to(self.device).eval()
@@ -80,6 +103,7 @@ class DPR(Retriever):
     def CalculateScores(self, queries: list[str]):
         queries_encoded = self._encode(self.query_encoder,queries,self.max_query_len)
         # Same dot product as in DPRLoss
-        scores = queries_encoded@self.document_embeddings.T
+        doc_embeddings = self.document_embeddings.to(queries_encoded.device)
+        scores = queries_encoded@doc_embeddings.T
 
-        return scores.numpy()
+        return scores.cpu().numpy()

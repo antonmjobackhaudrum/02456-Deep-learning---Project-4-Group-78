@@ -1,6 +1,7 @@
 """
 Train the two DPR encoders and save them in checkpoints/.
 """
+import os
 import hydra
 from transformers import AutoTokenizer
 
@@ -12,7 +13,12 @@ from src.training.trainer import Trainer
 
 @hydra.main(config_path='config', config_name='train_dpr.yaml', version_base=None)
 def main(cfg):
-    corpus = Corpus(dataset_name=cfg.dataset.name, base_dir=f'{cfg.base_path}/retrieval_data')
+    data_dir = (
+        f'{cfg.base_path}/data'
+        if os.path.exists(f'{cfg.base_path}/data/{cfg.dataset.name}')
+        else f'{cfg.base_path}/retrieval_data'
+    )
+    corpus = Corpus(dataset_name=cfg.dataset.name, base_dir=data_dir)
 
     tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
 
