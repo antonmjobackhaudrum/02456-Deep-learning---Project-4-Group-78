@@ -41,11 +41,11 @@ class Trainer:
                 batch_loss.append(self.train_step(batch))
 
             train_loss = np.mean(batch_loss)
-            val_loss = self.evaluate(val_loader)
+            val_loss, val_acc = self.evaluate(val_loader)
 
             train_losses.append(train_loss)
             val_losses.append(val_loss)
-            print(f'Epoch {epoch + 1}/{num_epochs}   train loss: {train_loss:.4f}   val loss: {val_loss:.4f}')
+            print(f'Epoch {epoch + 1}/{num_epochs}   train loss: {train_loss:.4f}   val loss: {val_loss:.4f}   val in-batch acc: {val_acc:.3f}')
 
             # Only save when the val loss improves
             if val_loss < best_val_loss:
@@ -70,9 +70,10 @@ class Trainer:
 
         return loss.item()
 
-    def evaluate(self, loader) -> float:
+    def evaluate(self, loader) -> tuple[float, float]:
         # Course Week 4
         batch_loss = []
+        n_correct, n_total = 0, 0
         self.query_encoder.eval()
         self.document_encoder.eval()
 
@@ -86,10 +87,14 @@ class Trainer:
 
                 batch_loss.append(loss.item())
 
+                predictions = (q_vectors @ d_vectors.T).argmax(dim=1)
+                n_correct += (predictions == torch.arange(len(predictions), device=predictions.device)).sum().item()
+                n_total += len(predictions)
+
         self.query_encoder.train()
         self.document_encoder.train()
 
-        return np.mean(batch_loss)
+        return np.mean(batch_loss), n_correct / n_total
 
     def _to_device(self, batch: dict) -> dict:
         return {key: value.to(self.device) for key, value in batch.items()}
