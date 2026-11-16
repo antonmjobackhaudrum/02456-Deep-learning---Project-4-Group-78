@@ -14,11 +14,22 @@
 module load python3/3.10.13
 module load cuda/12.1
 
+# Unset module variables that break virtual environments
+unset PYTHONHOME
+unset PYTHONPATH
+
 # Ensure output directory exists
 mkdir -p outputs
 
+# Activate virtual environment
+if [ -d ".venv" ]; then
+    source .venv/bin/activate
+elif [ -d "../.venv" ]; then
+    source ../.venv/bin/activate
+fi
+
 # 1. Train the DPR encoders on GPU
-python train.py device=cuda training.num_epochs=10
+python3 train.py device=cuda training.num_epochs=10
 
 # 2. Build vector DB and evaluate dense retrieval
-python main.py retriever=dpr device=cuda top_k=10
+python3 main.py retriever=dpr device=cuda top_k=10
