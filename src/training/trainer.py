@@ -10,9 +10,10 @@ from src.training.loss import DPRLoss
 
 
 class Trainer:
-    def __init__(self, lr: float = 3e-4, device: str = 'cpu'):
+    def __init__(self, lr: float = 3e-4, weight_decay: float = 0.01, device: str = 'cpu'):
         self.criterion = DPRLoss()
         self.lr = lr
+        self.weight_decay = weight_decay
         self.device = device
 
     def train(self, query_encoder: nn.Module, document_encoder: nn.Module,
@@ -24,6 +25,7 @@ class Trainer:
         self.optimizer = torch.optim.AdamW(
             list(self.query_encoder.parameters()) + list(self.document_encoder.parameters()),
             lr=self.lr,
+            weight_decay=self.weight_decay,
         )
 
         train_losses, val_losses = [], []

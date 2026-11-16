@@ -36,21 +36,25 @@ def main(cfg):
                                    max_query_len=cfg.training.max_query_len,
                                    max_doc_len=cfg.training.max_doc_len)
 
+    dropout = cfg.model.get('dropout', 0.1)
     query_encoder = TransformerEncoder(n_layers=cfg.model.n_layers,
-                                               n_heads=cfg.model.n_heads,
-                                               emb_dim=cfg.model.emb_dim,
-                                               hidden_dim=cfg.model.hidden_dim,
-                                               feed_forward_dim=cfg.model.feed_forward_dim,
-                                               pooling_type=cfg.model.pooling_type)
+                                       n_heads=cfg.model.n_heads,
+                                       emb_dim=cfg.model.emb_dim,
+                                       hidden_dim=cfg.model.hidden_dim,
+                                       feed_forward_dim=cfg.model.feed_forward_dim,
+                                       pooling_type=cfg.model.pooling_type,
+                                       dropout=dropout)
             
     document_encoder = TransformerEncoder(n_layers=cfg.model.n_layers,
-                                        n_heads=cfg.model.n_heads,
-                                        emb_dim=cfg.model.emb_dim,
-                                        hidden_dim=cfg.model.hidden_dim,
-                                        feed_forward_dim=cfg.model.feed_forward_dim,
-                                        pooling_type=cfg.model.pooling_type)
+                                          n_heads=cfg.model.n_heads,
+                                          emb_dim=cfg.model.emb_dim,
+                                          hidden_dim=cfg.model.hidden_dim,
+                                          feed_forward_dim=cfg.model.feed_forward_dim,
+                                          pooling_type=cfg.model.pooling_type,
+                                          dropout=dropout)
 
-    trainer = Trainer(lr=cfg.training.lr,device=cfg.device)
+    weight_decay = cfg.training.get('weight_decay', 0.01)
+    trainer = Trainer(lr=cfg.training.lr, weight_decay=weight_decay, device=cfg.device)
     train_losses, val_losses = trainer.train(query_encoder=query_encoder,
                                                  document_encoder=document_encoder,
                                                  train_loader=train_loader,

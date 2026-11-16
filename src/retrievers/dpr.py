@@ -44,20 +44,23 @@ class DPR(Retriever):
                 print(f'Saved vector database to {self.vector_db_path}')
 
     def __load_models(self):
+        dropout = self.cfg.model.get('dropout', 0.1)
         # n_heads, n_layers, emb_in, hidden_dim, feed_forward_dim
         query_encoder = TransformerEncoder(n_layers=self.cfg.model.n_layers,
                                            n_heads=self.cfg.model.n_heads,
                                            emb_dim=self.cfg.model.emb_dim,
                                            hidden_dim=self.cfg.model.hidden_dim,
                                            feed_forward_dim=self.cfg.model.feed_forward_dim,
-                                           pooling_type=self.cfg.model.pooling_type)
+                                           pooling_type=self.cfg.model.pooling_type,
+                                           dropout=dropout)
 
         document_encoder = TransformerEncoder(n_layers=self.cfg.model.n_layers,
                                            n_heads=self.cfg.model.n_heads,
                                            emb_dim=self.cfg.model.emb_dim,
                                            hidden_dim=self.cfg.model.hidden_dim,
                                            feed_forward_dim=self.cfg.model.feed_forward_dim,
-                                           pooling_type=self.cfg.model.pooling_type)
+                                           pooling_type=self.cfg.model.pooling_type,
+                                           dropout=dropout)
 
 
         # Load checkpoints if they exist

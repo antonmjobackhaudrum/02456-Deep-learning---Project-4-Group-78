@@ -8,12 +8,13 @@ device: cpu   # cpu | cuda
 base_path: "."
 
 training:
-  lr: 1e-4
-  num_epochs: 100
+  lr: 3e-4
+  num_epochs: 25
   batch_size: 64
   max_query_len: 64     # same as in dpr.py
   max_doc_len: 256      # same as in dpr.py
   checkpoint_dir: "checkpoints"
+  weight_decay: 0.01
 
 # Keep Hydra in the current directory to ensure relative paths are correct
 hydra:
