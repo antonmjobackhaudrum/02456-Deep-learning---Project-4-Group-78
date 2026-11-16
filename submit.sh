@@ -29,7 +29,7 @@ elif [ -d "../.venv" ]; then
 fi
 
 # 1. Train the DPR encoders on GPU
-python3 train.py device=cuda training.num_epochs=10
+python3 train.py device=cuda training.num_epochs=100
 
 # 2. Build vector DB and evaluate dense retrieval
-python3 main.py retriever=dpr device=cuda top_k=10
+python3 main.py retriever=dpr device=cuda top_k=100
