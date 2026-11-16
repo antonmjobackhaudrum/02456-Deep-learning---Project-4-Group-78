@@ -17,13 +17,6 @@ module load cuda/12.1
 # Ensure output directory exists
 mkdir -p outputs
 
-# Activate virtual environment
-if [ -d ".venv" ]; then
-    source .venv/bin/activate
-elif [ -d "../.venv" ]; then
-    source ../.venv/bin/activate
-fi
-
 # 1. Train the DPR encoders on GPU
 python train.py device=cuda training.num_epochs=10
 
