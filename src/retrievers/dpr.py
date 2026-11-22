@@ -32,7 +32,7 @@ class DPR(Retriever):
             db_path = 'checkpoints/document_embeddings.pt'
 
         self.vector_db_path = db_path
-        if self.vector_db_path and os.path.exists(self.vector_db_path):
+        if self.vector_db_path and os.path.exists(self.vector_db_path) and not self.__cache_is_stale():
             print(f'Loading vector database from {self.vector_db_path}...')
             self.document_embeddings = torch.load(self.vector_db_path, map_location=self.device)
         else:
@@ -42,6 +42,15 @@ class DPR(Retriever):
                 os.makedirs(os.path.dirname(self.vector_db_path), exist_ok=True)
                 torch.save(self.document_embeddings, self.vector_db_path)
                 print(f'Saved vector database to {self.vector_db_path}')
+
+    def __cache_is_stale(self) -> bool:
+        cache_time = os.path.getmtime(self.vector_db_path)
+        for key in ('query_encoder_weights_path', 'document_encoder_weights_path'):
+            weights_path = self.cfg.model.get(key, None)
+            if weights_path and os.path.exists(weights_path) and os.path.getmtime(weights_path) > cache_time:
+                print(f'Vector database {self.vector_db_path} is older than {weights_path}; rebuilding it.')
+                return True
+        return False
 
     def __load_models(self):
         dropout = self.cfg.model.get('dropout', 0.1)
@@ -69,14 +78,14 @@ class DPR(Retriever):
             query_encoder.load_state_dict(torch.load(query_weights_path, map_location=self.device))
             print(f'Loaded query encoder weights from {query_weights_path}')
         elif query_weights_path:
-            print(f'Warning: Query encoder checkpoint not found at {query_weights_path}. Using uninitialized weights.')
+            raise FileNotFoundError(f'Query encoder checkpoint not found at {query_weights_path}. Run train.py first.')
 
         document_weights_path = self.cfg.model.get('document_encoder_weights_path', None)
         if document_weights_path and os.path.exists(document_weights_path):
             document_encoder.load_state_dict(torch.load(document_weights_path, map_location=self.device))
             print(f'Loaded document encoder weights from {document_weights_path}')
         elif document_weights_path:
-            print(f'Warning: Document encoder checkpoint not found at {document_weights_path}. Using uninitialized weights.')
+            raise FileNotFoundError(f'Document encoder checkpoint not found at {document_weights_path}. Run train.py first.')
 
         self.query_encoder = query_encoder.to(self.device).eval()
         self.document_encoder = document_encoder.to(self.device).eval()

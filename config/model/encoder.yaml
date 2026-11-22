@@ -1,9 +1,9 @@
 pooling_type: 'mean' # mean | cls | max
-emb_dim: 128
-hidden_dim: 32
-n_heads: 4
-n_layers: 6
-feed_forward_dim: 768
+emb_dim: 512
+hidden_dim: 64
+n_heads: 8
+n_layers: 4
+feed_forward_dim: 2048
 dropout: 0.1
 
 query_encoder_weights_path: "checkpoints/query_encoder.pt"
